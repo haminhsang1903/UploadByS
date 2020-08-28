@@ -20,20 +20,28 @@ import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBui
 
 import com.bezkoder.spring.files.upload.message.ResponseMessage;
 import com.bezkoder.spring.files.upload.model.FileInfo;
+import com.bezkoder.spring.files.upload.service.FileRespository;
+import com.bezkoder.spring.files.upload.service.FileService;
 import com.bezkoder.spring.files.upload.service.FilesStorageService;
 
 @RestController
 public class FilesController {
 
+	private final String path = "https://uploadfile-bysanghub.herokuapp.com/";
+	
   @Autowired
   FilesStorageService storageService;
 
+  @Autowired
+  FileService respository;
+  
   @PostMapping("/upload")
   public ResponseEntity<ResponseMessage> uploadFile(@RequestParam("file") MultipartFile file) {
     String message = "";
     try {
       storageService.save(file);
-
+   //   respository.save(file.getOriginalFilename(),file.);
+      respository.save(new FileInfo(file.getOriginalFilename(),path+"files/"+file.getOriginalFilename()));
       message = "Uploaded the file successfully: " + file.getOriginalFilename();
       return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
     } catch (Exception e) {
